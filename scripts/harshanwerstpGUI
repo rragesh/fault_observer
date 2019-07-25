@@ -1,0 +1,13 @@
+
+CommandResult observe() {
+  //observe + plan
+  return CommandResult {(bool)planResult, "text from planner"};
+}
+
+CommandResult doScanning(CommandLogFunc log) {
+  if(bridge_.scan(log)) {
+    return observe();
+  }
+}
+
+CommandWidget *scan  = setupCmd("Scan", [this](CommandLogFunc log)-> CommandResult {return doScanning(log)});
