@@ -8,7 +8,6 @@ from ensenso_camera_msgs.msg import RequestDataAction, RequestDataActionGoal, Re
 # Automated planner
 import sys
 import pprint
-
 from fault_observer.AutomatedPlanner.pddl_parser import *
 from fault_observer.AutomatedPlanner.planner import *
 
@@ -43,8 +42,7 @@ class Observer(object):
     def cycle(self):
         # Black box
         if self.trigger_goal == True:
-            print("\nCamera started capturing")
-            print("I am monitoring the joints")
+            print('\nMonitoring the joint velocity')
             self.js_sub = rospy.Subscriber("/prbt/joint_states",JointState, self.joint_state_cb)
             self.trigger_goal  = False
 
@@ -55,9 +53,8 @@ class Observer(object):
             # check for the vibration
             self.compare = all(x == self.vel[0] for x in self.vel)
             self.init_state.append(self.compare)
-            print("Not moving = %r"%self.compare)
+            print("Robot stopped = %r"%self.compare)
             self.compare = False
-            print("camera stopped capturing\n")
             self.trigger_result = False
             self.vel = []
         self.create_problem()
@@ -77,8 +74,13 @@ class Observer(object):
             self.count = 0
             self.init_state = []
             self.status = self.create_plan()
+            # return self.status
+
             if self.status:
-                pass
+                print("True")
+                return True
+            else:
+                return False
                 # if the status is True then execute a service call to the snp_demo_gui
                 # request sent with "fault_detected" bool and response in "fault_isolated" bool
                 # based on the request the state machine with procedd or stop

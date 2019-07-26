@@ -5,7 +5,6 @@ from fault_observer.observer_class import Observer
 def main():
     rospy.init_node('observer_node')
     obs = Observer()
-
     while not rospy.is_shutdown():
         obs.cycle()
         rate = rospy.Rate(10)
