@@ -1,5 +1,5 @@
 #request
-bool fault_detected
 ---
 #response
-bool fault_isolated
+bool fault_detected
+string fault_message
