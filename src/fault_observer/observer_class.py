@@ -54,7 +54,7 @@ class Observer(object):
         new_index = []
         states  = self.init_state
         lookFor = True
-        i = 1
+        i = 0
         index = 0
         try:
             while i < len(states):
