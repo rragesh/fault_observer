@@ -16,8 +16,6 @@ class Observer(object):
 
     def __init__(self):
         self.scan_running  = False
-        self.trigger_result = False
-        self.status = False
         self.compare = False
         self.count = 0
         self.init_state = []
@@ -25,7 +23,7 @@ class Observer(object):
         self.goal_sub = rospy.Subscriber("request_data/goal", RequestDataActionGoal, self.goal_cb)
         self.result_sub = rospy.Subscriber("request_data/result", RequestDataActionResult, self.result_cb)
         faultServer = rospy.Service('fault_detect', fault_detect, self.create_problem)
-        # self.joint_state_sub = rospy.Subscriber("/prbt/joint_states", JointState, self.joint_state_cb)
+        # self.js_sub = rospy.Subscriber("/prbt/joint_states", JointState, self.joint_state_cb)
 
     def goal_cb(self,msg):
         # callback to subscribe for the action goal
@@ -36,16 +34,14 @@ class Observer(object):
     def result_cb(self,msg):
         # callback to subscribe for the action result
         self.scan_running = False
-        self.trigger_result = True
         # count number of captures
         self.js_sub.unregister()
         self.count = self.count+1
-        # check for the vibration
+        # check for the fault in scan
         self.compare = all(x == self.vel[0] for x in self.vel)
         self.init_state.append(self.compare)
         rospy.loginfo("Robot stopped = %r"%self.compare)
         self.compare = False
-        self.trigger_result = False
         self.vel = []
 
     def joint_state_cb(self,msg):
@@ -58,7 +54,7 @@ class Observer(object):
         new_index = []
         states  = self.init_state
         lookFor = True
-        i = 0
+        i = 1
         index = 0
         try:
             while i < len(states):
